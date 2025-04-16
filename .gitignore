@@ -1,0 +1,41 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Flask cache and session
+instance/
+*.db
+*.sqlite3
+
+# Environment variables
+.env
+.env.*
+
+# pip environment
+venv/
+ENV/
+env/
+.venv/
+
+# macOS / Linux / Windows
+.DS_Store
+Thumbs.db
+
+# VSCode / PyCharm / JetBrains
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# System files
+*.bak
+*.swp
+*.swo
+
+# Output files
+output.txt
+*.pdf
+*.csv
+*.json

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>One-Liner Extractor</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body { padding: 2rem; background-color: #f4f6f9; }
+    textarea { resize: vertical; min-height: 200px; }
+    .result-block { background: white; padding: 1rem; border-radius: 0.5rem; box-shadow: 0 2px 6px rgba(0,0,0,0.1); margin-bottom: 2rem; }
+    #progress-container { display: none; margin-top: 1rem; }
+    .toast-container { position: fixed; top: 1rem; right: 1rem; z-index: 9999; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <h1 class="mb-4 text-center text-primary">📰 One-Liner Extractor from URLs</h1>
+
+  <form id="urlForm">
+    <div class="mb-3">
+      <label for="urls" class="form-label">Paste one URL per line:</label>
+      <textarea class="form-control" id="urls" name="urls" placeholder="https://pib.gov.in/...\nhttps://news.site/article" required></textarea>
+    </div>
+    <div class="d-grid">
+      <button type="submit" class="btn btn-success">Grab Content</button>
+    </div>
+
+    <div id="progress-container" class="mt-4">
+      <label class="form-label">Processing URLs...</label>
+      <div class="progress">
+        <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated" role="progressbar" style="width: 0%">0%</div>
+      </div>
+    </div>
+  </form>
+
+  <div id="results" class="mt-5"></div>
+</div>
+
+<!-- Toast notifications -->
+<div class="toast-container">
+  <div id="success-toast" class="toast align-items-center text-bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Content extracted successfully!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+  <div id="error-toast" class="toast align-items-center text-bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+      <div class="toast-body">Something went wrong while fetching!</div>
+      <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  const form = document.getElementById('urlForm');
+  const progressContainer = document.getElementById('progress-container');
+  const progressBar = document.getElementById('progress-bar');
+  const resultsContainer = document.getElementById('results');
+
+  const showToast = (id) => {
+    const toast = new bootstrap.Toast(document.getElementById(id));
+    toast.show();
+  }
+
+  form.addEventListener('submit', async function (e) {
+    e.preventDefault();
+
+    const urls = document.getElementById('urls').value.trim().split('\n').filter(Boolean);
+    if (urls.length === 0) return;
+
+    resultsContainer.innerHTML = '';
+    progressContainer.style.display = 'block';
+    progressBar.style.width = '0%';
+    progressBar.textContent = '0%';
+
+    const total = urls.length;
+    const results = [];
+
+    for (let i = 0; i < urls.length; i++) {
+      const url = urls[i];
+      try {
+        const res = await fetch('/process', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ urls: [url] })
+        });
+        const data = await res.json();
+        results.push(...data);
+        showToast('success-toast');
+      } catch (err) {
+        results.push({ title: url, lines: [["Failed to fetch or parse content.", { entities: [], keywords: [] }]] });
+        showToast('error-toast');
+      }
+
+      const percent = Math.round(((i + 1) / total) * 100);
+      progressBar.style.width = percent + '%';
+      progressBar.textContent = percent + '%';
+    }
+
+    progressContainer.style.display = 'none';
+
+    results.forEach(block => {
+      const div = document.createElement('div');
+      div.classList.add('result-block');
+
+      const title = document.createElement('h5');
+      title.className = 'text-primary';
+      title.textContent = block.title;
+      div.appendChild(title);
+
+      const ul = document.createElement('ul');
+      ul.classList.add('list-group');
+      block.lines.forEach(([line, meta]) => {
+        const li = document.createElement('li');
+        li.className = 'list-group-item';
+        li.innerHTML = line;
+
+        const details = [];
+        if (meta.entities?.length) {
+          details.push(`Entities: ${meta.entities.join(', ')}`);
+        }
+        if (meta.keywords?.length) {
+          details.push(`Keywords: ${meta.keywords.join(', ')}`);
+        }
+        if (details.length) {
+          li.innerHTML += `<br><small class="text-muted">${details.join(' | ')}</small>`;
+        }
+
+        ul.appendChild(li);
+      });
+
+      div.appendChild(ul);
+      resultsContainer.appendChild(div);
+    });
+  });
+</script>
+</body>
+</html>
