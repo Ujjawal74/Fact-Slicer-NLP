@@ -9,6 +9,26 @@ nlp = spacy.load("en_core_web_sm")
 
 # Filters
 # KEYWORDS = ["yojana", "scheme", "laid", "foundation", "disbursed", "loan",  "crore", "cr", "lakh", "lakhs", "registered", "capacity", "inaugurated", "plant", "km", "mw", "installed", "bypass", "approved", "announced"]
+"""
+✅ Key spaCy Entity Labels for Current Affairs Extraction
+
+Entity Label     | What It Catches                                 | Example Matches
+-----------------|--------------------------------------------------|------------------------------------------------------------
+CARDINAL         | Any numeric value (count or general number)      | 800, 33 lakh, 1070, 500
+QUANTITY         | Numeric + unit of measurement                    | 14.4 km, 800 MW, 2600 metric tonnes, 2 lakh tonnes
+MONEY            | Monetary amounts with currency symbols or terms  | ₹1,070 crore, ₹33 lakh crore, 130 crore, Rs 6500 crore
+PERCENT          | Percentage values                                | 10%, 66%, 100 percent
+ORDINAL          | Positional indicators                            | 1st, 10th, second, fifth
+DATE             | Explicit date expressions                        | 14 April 2025, past decade, 2023, next year
+TIME             | Time indicators (optional, rarely used)          | 3:00 PM, this morning
+GPE              | Country, city, state names                       | India, Haryana, Yamunanagar, Delhi
+ORG              | Organizations and institutions                   | Government of India, PMO, NITI Aayog, RBI, Bharatmala
+FAC              | Infrastructure like plants, airports, roads      | Deenbandhu Thermal Plant, Rewari Bypass, AIIMS
+EVENT            | Named historical or scheduled events             | Jallianwala Bagh Massacre, Budget 2024, G20 Summit
+LAW              | Official schemes or acts (sometimes detected)    | Fasal Bima Yojana, GST, PM-Kisan
+PRODUCT          | Infrastructure/products (contextual triggers)    | solar panel, compressed biogas plant, thermal unit
+"""
+
 KEYWORDS = ["yojana"]
 IMPORTANT_LABELS = {"CARDINAL", "QUANTITY", "MONEY"}
 REMOVE_KEYWORDS = ["Posted On:", "Release ID:", "pib.gov.in", "MJPS/SR"]
