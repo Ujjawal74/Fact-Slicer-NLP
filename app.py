@@ -8,7 +8,12 @@ app = Flask(__name__)
 nlp = spacy.load("en_core_web_sm")
 
 # Filters
-# KEYWORDS = ["yojana", "scheme", "laid", "foundation", "disbursed", "loan",  "crore", "cr", "lakh", "lakhs", "registered", "capacity", "inaugurated", "plant", "km", "mw", "installed", "bypass", "approved", "announced"]
+"""
+KEYWORDS = ["yojana", "scheme", "laid", "foundation", "disbursed", "loan",  
+            "crore", "cr", "lakh", "lakhs", "registered", "capacity", "inaugurated",
+            "plant", "km", "mw", "installed", "bypass", "approved", "announced"]
+"""
+
 """
 ✅ Key spaCy Entity Labels for Current Affairs Extraction
 
@@ -29,7 +34,7 @@ LAW              | Official schemes or acts (sometimes detected)    | Fasal Bima
 PRODUCT          | Infrastructure/products (contextual triggers)    | solar panel, compressed biogas plant, thermal unit
 """
 
-KEYWORDS = ["yojana"]
+KEYWORDS = ["yojana", "signs", "sign", "MoU", "approved", "announced", "launched", "passed"]
 IMPORTANT_LABELS = {"CARDINAL", "QUANTITY", "MONEY"}
 REMOVE_KEYWORDS = ["Posted On:", "Release ID:", "pib.gov.in", "MJPS/SR"]
 
