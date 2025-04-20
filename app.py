@@ -35,7 +35,7 @@ PRODUCT          | Infrastructure/products (contextual triggers)    | solar pane
 """
 
 KEYWORDS = ["yojana", "signs", "sign", "MoU", "approved", "announced", "launched", "passed"]
-IMPORTANT_LABELS = {"CARDINAL", "QUANTITY", "MONEY"}
+IMPORTANT_LABELS = {"CARDINAL", "ORDINAL", "QUANTITY", "MONEY"}
 REMOVE_KEYWORDS = ["Posted On:", "Release ID:", "pib.gov.in", "MJPS/SR"]
 
 def has_keyword(sent):
